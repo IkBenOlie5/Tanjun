@@ -32,9 +32,11 @@
 from __future__ import annotations
 
 __all__: list[str] = [
+    # "AbstractInjectionContext",
+    # "BasicInjectionContext",
+    # "CallbackDescriptor",
     "cache_callback",
     "CallbackSig",
-    "Getter",
     "Undefined",
     "UNDEFINED",
     "UndefinedOr",
@@ -56,6 +58,13 @@ _T = typing.TypeVar("_T")
 _InjectorClientT = typing.TypeVar("_InjectorClientT", bound=InjectorClient)
 _ValueT = typing.TypeVar("_ValueT", bound=typing.Union[float, int, str])
 CallbackSig = collections.Callable[..., tanjun_abc.MaybeAwaitableT[_T]]
+
+class Undefined:
+    def __bool__(self) -> typing.Literal[False]: ...
+    def __new__(cls) -> Undefined: ...
+
+UNDEFINED: typing.Final[Undefined]
+UndefinedOr = typing.Union[Undefined, _T]
 
 class Getter(typing.Generic[_T]):
     __slots__: typing.Union[str, collections.Iterable[str]]
@@ -82,13 +91,6 @@ class Getter(typing.Generic[_T]):
         *,
         injecting: typing.Literal[False],
     ) -> None: ...
-
-class Undefined:
-    def __bool__(self) -> typing.Literal[False]: ...
-    def __new__(cls) -> Undefined: ...
-
-UNDEFINED: typing.Final[Undefined]
-UndefinedOr = typing.Union[Undefined, _T]
 
 def check_injecting(callback: CallbackSig[typing.Any], /) -> bool: ...
 
