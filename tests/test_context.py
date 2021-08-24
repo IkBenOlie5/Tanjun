@@ -350,6 +350,8 @@ class TestMessageContext:
         context._initial_response_id = hikari.Snowflake(32123)
         mock_attachment = mock.Mock()
         mock_attachments = [mock.Mock()]
+        mock_component = mock.Mock()
+        mock_components = [mock.Mock()]
         mock_embed = mock.Mock()
         mock_embeds = [mock.Mock()]
 
@@ -357,14 +359,14 @@ class TestMessageContext:
             "hi",
             attachment=mock_attachment,
             attachments=mock_attachments,
+            component=mock_component,
+            components=mock_components,
             embed=mock_embed,
             embeds=mock_embeds,
             replace_attachments=True,
             mentions_everyone=False,
             user_mentions=[123, 321],
-            role_mentions=[
-                321243,
-            ],
+            role_mentions=[321243],
         )
 
         mock_client.rest.edit_message.assert_awaited_once_with(
@@ -373,14 +375,14 @@ class TestMessageContext:
             content="hi",
             attachment=mock_attachment,
             attachments=mock_attachments,
+            component=mock_component,
+            components=mock_components,
             embed=mock_embed,
             embeds=mock_embeds,
             replace_attachments=True,
             mentions_everyone=False,
             user_mentions=[123, 321],
-            role_mentions=[
-                321243,
-            ],
+            role_mentions=[321243],
         )
 
     @pytest.mark.asyncio()
@@ -397,6 +399,8 @@ class TestMessageContext:
         context._last_response_id = hikari.Snowflake(32123)
         mock_attachment = mock.Mock()
         mock_attachments = [mock.Mock()]
+        mock_component = mock.Mock()
+        mock_components = [mock.Mock()]
         mock_embed = mock.Mock()
         mock_embeds = [mock.Mock()]
 
@@ -404,14 +408,14 @@ class TestMessageContext:
             "hi",
             attachment=mock_attachment,
             attachments=mock_attachments,
+            component=mock_component,
+            components=mock_components,
             embed=mock_embed,
             embeds=mock_embeds,
             replace_attachments=True,
             mentions_everyone=False,
             user_mentions=[123, 321],
-            role_mentions=[
-                321243,
-            ],
+            role_mentions=[321243],
         )
 
         mock_client.rest.edit_message.assert_awaited_once_with(
@@ -420,14 +424,14 @@ class TestMessageContext:
             content="hi",
             attachment=mock_attachment,
             attachments=mock_attachments,
+            component=mock_component,
+            components=mock_components,
             embed=mock_embed,
             embeds=mock_embeds,
             replace_attachments=True,
             mentions_everyone=False,
             user_mentions=[123, 321],
-            role_mentions=[
-                321243,
-            ],
+            role_mentions=[321243],
         )
 
     @pytest.mark.asyncio()
@@ -480,6 +484,8 @@ class TestMessageContext:
     async def test_respond(self, context: tanjun.MessageContext):
         mock_attachment = mock.Mock()
         mock_attachments = [mock.Mock()]
+        mock_component = mock.Mock()
+        mock_components = [mock.Mock()]
         mock_embed = mock.Mock()
         mock_embeds = [mock.Mock()]
 
@@ -487,6 +493,8 @@ class TestMessageContext:
             "hi",
             attachment=mock_attachment,
             attachments=mock_attachments,
+            component=mock_component,
+            components=mock_components,
             embed=mock_embed,
             embeds=mock_embeds,
             tts=True,
@@ -502,6 +510,8 @@ class TestMessageContext:
             content="hi",
             attachment=mock_attachment,
             attachments=mock_attachments,
+            component=mock_component,
+            components=mock_components,
             embed=mock_embed,
             embeds=mock_embeds,
             tts=True,
@@ -814,6 +824,8 @@ class TestSlashContext:
     async def test_edit_initial_response(self, context: tanjun.SlashContext):
         mock_attachment = mock.Mock()
         mock_attachments = [mock.Mock()]
+        mock_component = mock.Mock()
+        mock_components = [mock.Mock()]
         mock_embed = mock.Mock()
         mock_embeds = [mock.Mock()]
 
@@ -821,6 +833,8 @@ class TestSlashContext:
             "bye",
             attachment=mock_attachment,
             attachments=mock_attachments,
+            component=mock_component,
+            components=mock_components,
             embed=mock_embed,
             embeds=mock_embeds,
             replace_attachments=False,
@@ -833,6 +847,8 @@ class TestSlashContext:
             content="bye",
             attachment=mock_attachment,
             attachments=mock_attachments,
+            component=mock_component,
+            components=mock_components,
             embed=mock_embed,
             embeds=mock_embeds,
             replace_attachments=False,
