@@ -30,11 +30,12 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import pathlib
+import tempfile
 
 import nox
 
 nox.options.sessions = ["reformat", "check-dependencies", "lint", "spell-check", "type-check", "test"]  # type: ignore
-GENERAL_TARGETS = ["./examples", "./noxfile.py", "./tanjun", "./tests"]
+GENERAL_TARGETS = ["./examples", "./noxfile.py", "./scripts", "./tanjun", "./tests"]
 PYTHON_VERSIONS = ["3.9", "3.10"]  # TODO: @nox.session(python=["3.6", "3.7", "3.8"])?
 REQUIREMENTS = [
     # Temporarily assume #master for hikari and yuyo
@@ -53,6 +54,12 @@ def install_requirements(
         pass
 
     session.install("--upgrade", *requirements)
+
+
+@nox.session(name="check-versions")
+def check_versions(session: nox.Session) -> None:
+    install_requirements(session, ".[dev]")
+    session.run("python", "./scripts/verify_versions.py", "--")
 
 
 @nox.session(venv_backend="none")
@@ -169,16 +176,26 @@ def check_dependencies(session: nox.Session) -> None:
 
     # Note: this can be linked to a specific hash by adding it between raw and {file.name} as another route segment.
     with httpx.Client() as client:
-        response = client.get(
+        requirements = client.get(
             "https://gist.githubusercontent.com/FasterSpeeding/13e3d871f872fa09cf7bdc4144d62b2b/raw/requirements.json"
-        )
-        requirements = response.json()
+        ).json()
 
         # Note: this can be linked to a specific hash by adding it between raw and {file.name} as another route segment.
-        response = client.get(
+        code = client.get(
             "https://gist.githubusercontent.com/FasterSpeeding/13e3d871f872fa09cf7bdc4144d62b2b/raw/check_dependency.py"
-        )
-        code = response.read().decode("utf-8")
+        ).read()
 
     session.install(*requirements)
-    session.run("python", "-c", code, "--ignore", "hikari", "hikari-yuyo", log=False)
+    # This is saved to a temporary file to avoid the source showing up in any of the output.
+
+    # A try, finally is used to delete the file rather than relying on delete=True behaviour
+    # as on Windows the file cannot be accessed by other processes if delete is True.
+    file = tempfile.NamedTemporaryFile(delete=False)
+    try:
+        with file:
+            file.write(code)
+
+        session.run("python", file.name, "--ignore", "hikari", "hikari-yuyo")
+
+    finally:
+        pathlib.Path(file.name).unlink(missing_ok=False)
